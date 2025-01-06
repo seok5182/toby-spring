@@ -1,13 +1,13 @@
 package toby.spring.springbook.user.dao;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import toby.spring.springbook.user.domain.User;
 
-public class UserDao {
+public abstract class UserDao {
+
 	public void add(User user) throws ClassNotFoundException, SQLException {
 		Connection c = getConnection();
 
@@ -42,9 +42,5 @@ public class UserDao {
 		return user;
 	}
 
-	private Connection getConnection() throws ClassNotFoundException, SQLException {
-		Class.forName("com.mysql.jdbc.Driver");
-		Connection c = DriverManager.getConnection("jdbc:mysql://localhost:3306/toby", "****", "****");
-		return c;
-	}
+	public abstract Connection getConnection() throws ClassNotFoundException, SQLException;
 }
