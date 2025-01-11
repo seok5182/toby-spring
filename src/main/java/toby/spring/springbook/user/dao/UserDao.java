@@ -43,15 +43,30 @@ public class UserDao {
 		ps.setString(1, id);
 
 		ResultSet rs = ps.executeQuery();
-		rs.next();
-		User user = new User();
-		user.setId(rs.getString("id"));
-		user.setName(rs.getString("name"));
-		user.setPassword(rs.getString("password"));
+//		rs.next();
+//		User user = new User();
+//		user.setId(rs.getString("id"));
+//		user.setName(rs.getString("name"));
+//		user.setPassword(rs.getString("password"));
+
+		// 리스트 2-14 데이터를 찾지 못하면 예외를 발생시키도록 수정한 get() 메소드
+		// User는 null 상태로 초기화
+		User user = null;
+		// id를 조건으로 한 쿼리의 결과가 있으면 User 오브젝트를 만들고 값을 넣어준다.
+		if (rs.next()) {
+			user = new User();
+			user.setId(rs.getString("id"));
+			user.setName(rs.getString("name"));
+			user.setPassword(rs.getString("password"));
+		}
 
 		rs.close();
 		ps.close();
 		c.close();
+
+		// 결과가 없으면 User는 null 상태 그대로일 것
+		// 이를 확인해서 예외를 던져준다.
+		if (user == null) throw new SQLException("User not found");
 
 		return user;
 	}

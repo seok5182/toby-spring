@@ -2,9 +2,11 @@ package toby.spring.springbook.user.dao;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.sql.SQLException;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
@@ -12,6 +14,9 @@ import toby.spring.springbook.user.domain.User;
 
 @SpringBootTest
 class UserDaoTest {
+
+	@Autowired
+	private UserDao userDao;
 
 	// 1.3.3 테스트
 	@Test
@@ -111,21 +116,59 @@ class UserDaoTest {
 		ApplicationContext context = new AnnotationConfigApplicationContext(DaoFactory.class);
 		UserDao dao = context.getBean("userDao", UserDao.class);
 
+		// 2.3.3 get() 테스트 기능을 보완한 addAndGet() 테스트(리스트 2-12)
+		User user1 = new User("gyumee", "박성철", "springno1");
+		User user2 = new User("leegw700", "이길원", "springno2");
+
 		// 2.3.2 테스트 결과의 일관성(deleteAll()과 getCount() 추가)
 		dao.deleteAll();
 		assertThat(dao.getCount(), is(0));
 
-		User user = new User();
-		user.setId("gyumee");
-		user.setName("박성철");
-		user.setPassword("springno1");
+		dao.add(user1);
+		dao.add(user2);
+		assertThat(dao.getCount(), is(2));
 
-		dao.add(user);
+		User userget1 = dao.get(user1.getId());
+		assertThat(userget1.getName(), is(user1.getName()));
+		assertThat(userget1.getPassword(), is(user1.getPassword()));
+
+		User userget2 = dao.get(user2.getId());
+		assertThat(userget2.getName(), is(user2.getName()));
+		assertThat(userget2.getPassword(), is(user2.getPassword()));
+	}
+
+	// 2.3.3 테스트(리스트 2-11)
+	@Test
+	void count() throws SQLException, ClassNotFoundException {
+		ApplicationContext context = new AnnotationConfigApplicationContext(DaoFactory.class);
+		UserDao dao = context.getBean("userDao", UserDao.class);
+
+		User user1 = new User("gyumee", "박성철", "springno1");
+		User user2 = new User("leegw700", "이길원", "springno2");
+		User user3 = new User("bumjin", "박범진", "springno3");
+
+		dao.deleteAll();
+		assertThat(dao.getCount(), is(0));
+
+		dao.add(user1);
 		assertThat(dao.getCount(), is(1));
 
-		User user2 = dao.get(user.getId());
+		dao.add(user2);
+		assertThat(dao.getCount(), is(2));
 
-		assertThat(user2.getName(), is(user.getName()));
-		assertThat(user2.getPassword(), is(user.getPassword()));
+		dao.add(user3);
+		assertThat(dao.getCount(), is(3));
+	}
+
+	// 2.3.3 테스트(리스트 2-13)
+	@Test
+	void getUserFailure() throws SQLException, ClassNotFoundException {
+		ApplicationContext context = new AnnotationConfigApplicationContext(DaoFactory.class);
+		UserDao dao = context.getBean("userDao", UserDao.class);
+
+		dao.deleteAll();
+		assertThat(dao.getCount(), is(0));
+
+		assertThrows(SQLException.class, () -> dao.get("unknown_id"));
 	}
 }
