@@ -111,12 +111,17 @@ class UserDaoTest {
 		ApplicationContext context = new AnnotationConfigApplicationContext(DaoFactory.class);
 		UserDao dao = context.getBean("userDao", UserDao.class);
 
+		// 2.3.2 테스트 결과의 일관성(deleteAll()과 getCount() 추가)
+		dao.deleteAll();
+		assertThat(dao.getCount(), is(0));
+
 		User user = new User();
 		user.setId("gyumee");
 		user.setName("박성철");
 		user.setPassword("springno1");
 
 		dao.add(user);
+		assertThat(dao.getCount(), is(1));
 
 		User user2 = dao.get(user.getId());
 
