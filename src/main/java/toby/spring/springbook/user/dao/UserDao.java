@@ -11,16 +11,16 @@ public class UserDao {
 	private ConnectionMaker connectionMaker;
 
 	// 생성자를 통한 의존관계 주입
-	/*
 	public UserDao(ConnectionMaker connectionMaker) {
 		this.connectionMaker = connectionMaker;
 	}
-	*/
 
 	// 수정자(setter) 메소드를 이용한 주입
+	/*
 	public void setConnectionMaker(ConnectionMaker connectionMaker) {
 		this.connectionMaker = connectionMaker;
 	}
+	*/
 
 	public void add(User user) throws ClassNotFoundException, SQLException {
 		Connection c = connectionMaker.makeConnection();

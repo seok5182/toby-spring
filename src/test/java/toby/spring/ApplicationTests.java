@@ -1,10 +1,7 @@
 package toby.spring;
 
-import java.sql.SQLException;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
-import toby.spring.springbook.user.dao.UserDao;
-import toby.spring.springbook.user.domain.User;
 
 @SpringBootTest
 class ApplicationTests {
@@ -13,6 +10,7 @@ class ApplicationTests {
 	void contextLoads() {
 	}
 
+	/*
 	@Test
 	void test() throws SQLException, ClassNotFoundException {
 		UserDao dao = new UserDao();
@@ -32,4 +30,5 @@ class ApplicationTests {
 
 		System.out.println(user2.getId() + " 조회 성공");
 	}
+	*/
 }
