@@ -5,8 +5,9 @@ import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.sql.SQLException;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
@@ -15,8 +16,32 @@ import toby.spring.springbook.user.domain.User;
 @SpringBootTest
 class UserDaoTest {
 
-	@Autowired
-	private UserDao userDao;
+	private UserDao dao;
+	private User user1;
+	private User user2;
+	private User user3;
+
+	/*
+	JUnit4 @Before -> JUnit5 @BeforeEach, @BeforeAll 으로 바뀜
+
+	@BeforeEach, @BeforeAll 공통점
+	- 리턴 타입으로 반드시 void
+	- 접근 제한자로 private 사용 금지
+
+	@BeforeEach, @BeforeAll 차이점
+	- @BeforeEach는 static으로 선언 금지 / 각각의 테스트 메소드 실행 전에 실행
+	- @BeforeAll은 반드시 static으로 선언 / 모든 테스트 메소드가 실행 전에 한 번 실행
+
+	*/
+	@BeforeEach
+	void setUp() {
+		ApplicationContext context = new AnnotationConfigApplicationContext(DaoFactory.class);
+		this.dao = context.getBean("userDao", UserDao.class);
+
+		this.user1 = new User("gyumee", "박성철", "springno1");
+		this.user2 = new User("leegw700", "이길원", "springno2");
+		this.user3 = new User("bumjin", "박범진", "springno3");
+	}
 
 	// 1.3.3 테스트
 	@Test
@@ -65,8 +90,8 @@ class UserDaoTest {
 	// 1.5.1 테스트
 	@Test
 	void test3() throws SQLException, ClassNotFoundException {
-		ApplicationContext context = new AnnotationConfigApplicationContext(DaoFactory.class);
-		UserDao dao = context.getBean("userDao", UserDao.class);
+//		ApplicationContext context = new AnnotationConfigApplicationContext(DaoFactory.class);
+//		UserDao dao = context.getBean("userDao", UserDao.class);
 
 		User user = new User();
 		user.setId("whiteship");
@@ -87,8 +112,8 @@ class UserDaoTest {
 	// 2.2.1 테스트 검증의 자동화
 	@Test
 	void test4() throws SQLException, ClassNotFoundException {
-		ApplicationContext context = new AnnotationConfigApplicationContext(DaoFactory.class);
-		UserDao dao = context.getBean("userDao", UserDao.class);
+//		ApplicationContext context = new AnnotationConfigApplicationContext(DaoFactory.class);
+//		UserDao dao = context.getBean("userDao", UserDao.class);
 
 		User user = new User();
 		user.setId("whiteship");
@@ -113,12 +138,12 @@ class UserDaoTest {
 	// 2.2.2 테스트의 효율적인 수행과 결과 관리
 	@Test
 	void addAndGet() throws SQLException, ClassNotFoundException {
-		ApplicationContext context = new AnnotationConfigApplicationContext(DaoFactory.class);
-		UserDao dao = context.getBean("userDao", UserDao.class);
+//		ApplicationContext context = new AnnotationConfigApplicationContext(DaoFactory.class);
+//		UserDao dao = context.getBean("userDao", UserDao.class);
 
 		// 2.3.3 get() 테스트 기능을 보완한 addAndGet() 테스트(리스트 2-12)
-		User user1 = new User("gyumee", "박성철", "springno1");
-		User user2 = new User("leegw700", "이길원", "springno2");
+//		User user1 = new User("gyumee", "박성철", "springno1");
+//		User user2 = new User("leegw700", "이길원", "springno2");
 
 		// 2.3.2 테스트 결과의 일관성(deleteAll()과 getCount() 추가)
 		dao.deleteAll();
@@ -140,12 +165,12 @@ class UserDaoTest {
 	// 2.3.3 테스트(리스트 2-11)
 	@Test
 	void count() throws SQLException, ClassNotFoundException {
-		ApplicationContext context = new AnnotationConfigApplicationContext(DaoFactory.class);
-		UserDao dao = context.getBean("userDao", UserDao.class);
+//		ApplicationContext context = new AnnotationConfigApplicationContext(DaoFactory.class);
+//		UserDao dao = context.getBean("userDao", UserDao.class);
 
-		User user1 = new User("gyumee", "박성철", "springno1");
-		User user2 = new User("leegw700", "이길원", "springno2");
-		User user3 = new User("bumjin", "박범진", "springno3");
+//		User user1 = new User("gyumee", "박성철", "springno1");
+//		User user2 = new User("leegw700", "이길원", "springno2");
+//		User user3 = new User("bumjin", "박범진", "springno3");
 
 		dao.deleteAll();
 		assertThat(dao.getCount(), is(0));
@@ -163,8 +188,8 @@ class UserDaoTest {
 	// 2.3.3 테스트(리스트 2-13)
 	@Test
 	void getUserFailure() throws SQLException, ClassNotFoundException {
-		ApplicationContext context = new AnnotationConfigApplicationContext(DaoFactory.class);
-		UserDao dao = context.getBean("userDao", UserDao.class);
+//		ApplicationContext context = new AnnotationConfigApplicationContext(DaoFactory.class);
+//		UserDao dao = context.getBean("userDao", UserDao.class);
 
 		dao.deleteAll();
 		assertThat(dao.getCount(), is(0));
