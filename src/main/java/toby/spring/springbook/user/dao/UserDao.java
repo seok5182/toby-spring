@@ -23,14 +23,11 @@ public class UserDao {
 	*/
 
 	// 리스트 3-15 user 정보를 AddStatement에 전달해주는 add() 메소드
-	public void add(User user) throws ClassNotFoundException, SQLException {
+	public void add(final User user) throws ClassNotFoundException, SQLException {
 		// 리스트 3-16 add() 메소드 내의 로컬 클래스로 이전한 AddStatement
+		// 리스트 3-17 add() 메소드의 로컬 변수를 직접 사용하도록 수정한 AddStatement
+		// 내부 클래스에서 외부의 변수를 사용할 때는 외부 변수는 반드시 final로 선언해야 한다.(user 파라미터는 메소드 내부에서 변경될 일이 없으므로 final로 선언해도 무방)
 		class AddStatement implements StatementStrategy {
-			User user;
-
-			public AddStatement(User user) {
-				this.user = user;
-			}
 
 			public PreparedStatement makePreparedStatement(Connection c) throws SQLException {
 				PreparedStatement ps = c.prepareStatement("insert into users(id, name, password) values(?,?,?)");
@@ -42,7 +39,7 @@ public class UserDao {
 			}
 		}
 
-		StatementStrategy st = new AddStatement(user);
+		StatementStrategy st = new AddStatement();
 		jdbcContextWithStatementStrategy(st);
 	}
 
