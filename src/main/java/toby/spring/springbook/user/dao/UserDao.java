@@ -22,18 +22,10 @@ public class UserDao {
 	}
 	*/
 
+	// 리스트 3-15 user 정보를 AddStatement에 전달해주는 add() 메소드
 	public void add(User user) throws ClassNotFoundException, SQLException {
-		Connection c = connectionMaker.makeConnection();
-
-		PreparedStatement ps = c.prepareStatement("insert into users values(?,?,?)");
-		ps.setString(1, user.getId());
-		ps.setString(2, user.getName());
-		ps.setString(3, user.getPassword());
-
-		ps.executeUpdate();
-
-		ps.close();
-		c.close();
+		StatementStrategy st = new AddStatement(user);
+		jdbcContextWithStatementStrategy(st);
 	}
 
 	public User get(String id) throws ClassNotFoundException, SQLException {
