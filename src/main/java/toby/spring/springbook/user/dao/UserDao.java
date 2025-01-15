@@ -27,20 +27,21 @@ public class UserDao {
 		// 리스트 3-16 add() 메소드 내의 로컬 클래스로 이전한 AddStatement
 		// 리스트 3-17 add() 메소드의 로컬 변수를 직접 사용하도록 수정한 AddStatement
 		// 내부 클래스에서 외부의 변수를 사용할 때는 외부 변수는 반드시 final로 선언해야 한다.(user 파라미터는 메소드 내부에서 변경될 일이 없으므로 final로 선언해도 무방)
-		class AddStatement implements StatementStrategy {
+		// 리스트 3-18 AddStatement를 익명 내부 클래스로 전환
+		jdbcContextWithStatementStrategy(
+			new StatementStrategy() {
+				public PreparedStatement makePreparedStatement(Connection c) throws SQLException {
+					PreparedStatement ps = c.prepareStatement("insert into users(id, name, password) values(?,?,?)");
+					ps.setString(1, user.getId());
+					ps.setString(2, user.getName());
+					ps.setString(3, user.getPassword());
 
-			public PreparedStatement makePreparedStatement(Connection c) throws SQLException {
-				PreparedStatement ps = c.prepareStatement("insert into users(id, name, password) values(?,?,?)");
-				ps.setString(1, user.getId());
-				ps.setString(2, user.getName());
-				ps.setString(3, user.getPassword());
-
-				return ps;
+					return ps;
+				}
 			}
-		}
-
-		StatementStrategy st = new AddStatement();
-		jdbcContextWithStatementStrategy(st);
+		);
+//		StatementStrategy st = new AddStatement();
+//		jdbcContextWithStatementStrategy(st);
 	}
 
 	public User get(String id) throws ClassNotFoundException, SQLException {
@@ -81,9 +82,17 @@ public class UserDao {
 	}
 
 	// 리스트 3-12 클라이언트 책임을 담당할 deleteAll() 메소드
+	// 리스트 3-20 익명 내부 클래스를 적용한 deleteAll() 메소드
 	public void deleteAll() throws SQLException, ClassNotFoundException {
-		StatementStrategy st = new DeleteAllStatement();
-		jdbcContextWithStatementStrategy(st);
+		jdbcContextWithStatementStrategy(
+			new StatementStrategy() {
+				public PreparedStatement makePreparedStatement(Connection c) throws SQLException {
+					return c.prepareStatement("delete from users");
+				}
+			}
+		);
+//		StatementStrategy st = new DeleteAllStatement();
+//		jdbcContextWithStatementStrategy(st);
 	}
 
 	public int getCount() throws SQLException, ClassNotFoundException {
