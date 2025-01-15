@@ -24,6 +24,24 @@ public class UserDao {
 
 	// 리스트 3-15 user 정보를 AddStatement에 전달해주는 add() 메소드
 	public void add(User user) throws ClassNotFoundException, SQLException {
+		// 리스트 3-16 add() 메소드 내의 로컬 클래스로 이전한 AddStatement
+		class AddStatement implements StatementStrategy {
+			User user;
+
+			public AddStatement(User user) {
+				this.user = user;
+			}
+
+			public PreparedStatement makePreparedStatement(Connection c) throws SQLException {
+				PreparedStatement ps = c.prepareStatement("insert into users(id, name, password) values(?,?,?)");
+				ps.setString(1, user.getId());
+				ps.setString(2, user.getName());
+				ps.setString(3, user.getPassword());
+
+				return ps;
+			}
+		}
+
 		StatementStrategy st = new AddStatement(user);
 		jdbcContextWithStatementStrategy(st);
 	}
@@ -109,7 +127,8 @@ public class UserDao {
 	}
 
 	// 리스트 3-11 메소드로 분리한 try/catch/finally 컨텍스트 코드
-	public void jdbcContextWithStatementStrategy(StatementStrategy stmt) throws SQLException, ClassNotFoundException {
+	public void jdbcContextWithStatementStrategy(StatementStrategy stmt)
+		throws SQLException, ClassNotFoundException {
 		Connection c = null;
 		PreparedStatement ps = null;
 
