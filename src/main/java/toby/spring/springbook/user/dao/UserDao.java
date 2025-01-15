@@ -66,35 +66,17 @@ public class UserDao {
 
 		// 결과가 없으면 User는 null 상태 그대로일 것
 		// 이를 확인해서 예외를 던져준다.
-		if (user == null) throw new SQLException("User not found");
+		if (user == null) {
+			throw new SQLException("User not found");
+		}
 
 		return user;
 	}
 
+	// 리스트 3-12 클라이언트 책임을 담당할 deleteAll() 메소드
 	public void deleteAll() throws SQLException, ClassNotFoundException {
-		Connection c = null;
-		PreparedStatement ps = null;
-
-		try {
-			c = connectionMaker.makeConnection();
-			ps = c.prepareStatement("delete from users");
-			ps.executeUpdate();
-		} catch (SQLException e) {
-			throw e;
-		} finally {
-			if (ps != null) {
-				try {
-					ps.close();
-				} catch (SQLException e) {
-				}
-			}
-			if (c != null) {
-				try {
-					c.close();
-				} catch (SQLException e) {
-				}
-			}
-		}
+		StatementStrategy st = new DeleteAllStatement();
+		jdbcContextWithStatementStrategy(st);
 	}
 
 	public int getCount() throws SQLException, ClassNotFoundException {
@@ -132,5 +114,47 @@ public class UserDao {
 				}
 			}
 		}
+	}
+
+	// 리스트 3-11 메소드로 분리한 try/catch/finally 컨텍스트 코드
+	public void jdbcContextWithStatementStrategy(StatementStrategy stmt) throws SQLException, ClassNotFoundException {
+		Connection c = null;
+		PreparedStatement ps = null;
+
+		try {
+			c = connectionMaker.makeConnection();
+
+			// 리스트 3-6 변하는 부분을 메소드로 추출한 후의 deleteAll()
+			// ps = makeStatement(c);
+
+			// 리스트 3-10 전략 패턴을 따라 DeleteAllStatement가 적용된 deleteAll() 메소드
+			// StatementStrategy strategy = new DeleteAllStatement();
+			// ps = strategy.makePreparedStatement(c);
+
+			ps = stmt.makePreparedStatement(c);
+
+			ps.executeUpdate();
+		} catch (SQLException e) {
+			throw e;
+		} finally {
+			if (ps != null) {
+				try {
+					ps.close();
+				} catch (SQLException e) {
+				}
+			}
+			if (c != null) {
+				try {
+					c.close();
+				} catch (SQLException e) {
+				}
+			}
+		}
+	}
+
+	private PreparedStatement makeStatement(Connection c) throws SQLException {
+		PreparedStatement ps;
+		ps = c.prepareStatement("delete from users");
+		return ps;
 	}
 }
