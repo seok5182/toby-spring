@@ -9,7 +9,8 @@ public class DaoFactory {
 	// 생성자 DI를 사용하는 팩토리 메소드
 	@Bean // 오브젝트 생성을 담당하는 IoC 메소드라는 뜻
 	public UserDao userDao() {
-		return new UserDao(connectionMaker());
+		UserDao userDao = new UserDao(connectionMaker());
+		return userDao;
 	}
 
 	// 수정자 메소드 DI를 사용하는 팩토리 메소드
@@ -27,4 +28,5 @@ public class DaoFactory {
 	public ConnectionMaker connectionMaker() {
 		return new DConnectionMaker();
 	}
+
 }
