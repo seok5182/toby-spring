@@ -43,4 +43,15 @@ public class JdbcContext {
 			}
 		}
 	}
+
+	// 리스트 3-28 JdbcContext로 옮긴 excuteSql() 메소드
+	public void executeSql(final String query) throws ClassNotFoundException, SQLException {
+		workWithStatementStrategy(
+			new StatementStrategy() {
+				public PreparedStatement makePreparedStatement(Connection c) throws SQLException {
+					return c.prepareStatement(query);
+				}
+			}
+		);
+	}
 }

@@ -104,9 +104,9 @@ public class UserDao {
 		return user;
 	}
 
-	// 리스트 3-27 변하지 않는 부분을 분리시킨 deleteAll() 메소드
+	// 리스트 3-29 JdbcContext로 옮긴 executeSql()을 사용하는 deleteAll() 메소드
 	public void deleteAll() throws SQLException, ClassNotFoundException {
-		executeSql("delete from users");
+		this.jdbcContext.executeSql("delete from users");
 	}
 
 	public int getCount() throws SQLException, ClassNotFoundException {
@@ -144,15 +144,5 @@ public class UserDao {
 				}
 			}
 		}
-	}
-
-	private void executeSql(final String query) throws ClassNotFoundException, SQLException {
-		this.jdbcContext.workWithStatementStrategy(
-			new StatementStrategy() {
-				public PreparedStatement makePreparedStatement(Connection c) throws SQLException {
-					return c.prepareStatement(query);
-				}
-			}
-		);
 	}
 }
