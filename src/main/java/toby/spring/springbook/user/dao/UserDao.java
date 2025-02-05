@@ -104,26 +104,9 @@ public class UserDao {
 		return user;
 	}
 
-	// 리스트 3-12 클라이언트 책임을 담당할 deleteAll() 메소드
-	// 리스트 3-20 익명 내부 클래스를 적용한 deleteAll() 메소드
+	// 리스트 3-27 변하지 않는 부분을 분리시킨 deleteAll() 메소드
 	public void deleteAll() throws SQLException, ClassNotFoundException {
-		this.jdbcContext.workWithStatementStrategy(
-			new StatementStrategy() {
-				public PreparedStatement makePreparedStatement(Connection c) throws SQLException {
-					return c.prepareStatement("delete from users");
-				}
-			}
-		);
-
-//		jdbcContextWithStatementStrategy(
-//			new StatementStrategy() {
-//				public PreparedStatement makePreparedStatement(Connection c) throws SQLException {
-//					return c.prepareStatement("delete from users");
-//				}
-//			}
-//		);
-//		StatementStrategy st = new DeleteAllStatement();
-//		jdbcContextWithStatementStrategy(st);
+		executeSql("delete from users");
 	}
 
 	public int getCount() throws SQLException, ClassNotFoundException {
@@ -163,46 +146,13 @@ public class UserDao {
 		}
 	}
 
-	// 리스트 3-11 메소드로 분리한 try/catch/finally 컨텍스트 코드
-//	public void jdbcContextWithStatementStrategy(StatementStrategy stmt)
-//		throws SQLException, ClassNotFoundException {
-//		Connection c = null;
-//		PreparedStatement ps = null;
-//
-//		try {
-//			c = connectionMaker.makeConnection();
-//
-//			// 리스트 3-6 변하는 부분을 메소드로 추출한 후의 deleteAll()
-//			// ps = makeStatement(c);
-//
-//			// 리스트 3-10 전략 패턴을 따라 DeleteAllStatement가 적용된 deleteAll() 메소드
-//			// StatementStrategy strategy = new DeleteAllStatement();
-//			// ps = strategy.makePreparedStatement(c);
-//
-//			ps = stmt.makePreparedStatement(c);
-//
-//			ps.executeUpdate();
-//		} catch (SQLException e) {
-//			throw e;
-//		} finally {
-//			if (ps != null) {
-//				try {
-//					ps.close();
-//				} catch (SQLException e) {
-//				}
-//			}
-//			if (c != null) {
-//				try {
-//					c.close();
-//				} catch (SQLException e) {
-//				}
-//			}
-//		}
-//	}
-
-//	private PreparedStatement makeStatement(Connection c) throws SQLException {
-//		PreparedStatement ps;
-//		ps = c.prepareStatement("delete from users");
-//		return ps;
-//	}
+	private void executeSql(final String query) throws ClassNotFoundException, SQLException {
+		this.jdbcContext.workWithStatementStrategy(
+			new StatementStrategy() {
+				public PreparedStatement makePreparedStatement(Connection c) throws SQLException {
+					return c.prepareStatement(query);
+				}
+			}
+		);
+	}
 }
